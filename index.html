@@ -59,24 +59,6 @@
             font-size: 18px;
             color: red;
         }
-        .pill-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 5px;
-        }
-        .pill {
-            padding: 5px 10px;
-            background: #ddd;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-        }
-        .pill span {
-            margin-left: 5px;
-            cursor: pointer;
-            color: red;
-        }
         .input-field {
             width: 100%;
             padding: 5px;
@@ -127,42 +109,39 @@
         <h3>Add Appliance</h3>
         <div class="section">
             <label>Appliance Name</label>
-            <input type="text" id="applianceName" class="input-field" onkeyup="handlePillInput(event, 'namePills')">
-            <div id="namePills" class="pill-container"></div>
+            <input type="text" id="applianceName" class="input-field">
+        </div>
+        <div class="section">
+            <label>Description</label>
+            <input type="text" id="description" class="input-field">
         </div>
 
-        <h4>Prompt</h4>
-        
-        <div class="section">
-            <label>State</label>
-            <input type="text" class="input-field">
-            <label>Description</label>
-            <input type="text" class="input-field">
-            <label>Type</label>
-            <input type="text" class="input-field">
+        <h4>State</h4>
+        <div id="stateContainer">
+            <div class="section state-section">
+                <label>Name</label>
+                <input type="text" class="input-field">
+                <label>Description</label>
+                <input type="text" class="input-field">
+                <label>Type</label>
+                <select class="input-field" onchange="toggleFields(this)">
+                    <option value="boolean">Boolean</option>
+                    <option value="number">Number</option>
+                    <option value="list">List</option>
+                </select>
+                <div class="numberFields" style="display: none;">
+                    <label>Low Limit</label>
+                    <input type="number" class="input-field">
+                    <label>High Limit</label>
+                    <input type="number" class="input-field">
+                </div>
+                <div class="listField" style="display: none;">
+                    <label>Comma-separated values</label>
+                    <input type="text" class="input-field">
+                </div>
+            </div>
         </div>
-        
-        <div class="section">
-            <label>Name</label>
-            <input type="text" class="input-field">
-            <label>Valid Range</label>
-            <input type="number" class="input-field" placeholder="Lower Value">
-            <input type="number" class="input-field" placeholder="Upper Value">
-            <label>Description</label>
-            <input type="text" class="input-field">
-            <label>Type</label>
-            <input type="text" class="input-field">
-        </div>
-        
-        <div class="section">
-            <label>Mode</label>
-            <input type="text" id="modeInput" class="input-field" onkeyup="handlePillInput(event, 'modePills')">
-            <div id="modePills" class="pill-container"></div>
-            <label>Description</label>
-            <input type="text" class="input-field">
-            <label>Type</label>
-            <input type="text" class="input-field">
-        </div>
+        <button onclick="addState()">Add State</button>
     </div>
     
     <script>
@@ -196,6 +175,41 @@
                 applianceList.appendChild(div);
             });
             deletedAppliances = [];
+        }
+
+        function toggleFields(selectElement) {
+            let section = selectElement.closest('.state-section');
+            section.querySelector('.numberFields').style.display = (selectElement.value === "number") ? "block" : "none";
+            section.querySelector('.listField').style.display = (selectElement.value === "list") ? "block" : "none";
+        }
+        
+        function addState() {
+            let stateContainer = document.getElementById("stateContainer");
+            let newState = document.createElement("div");
+            newState.classList.add("section", "state-section");
+            newState.innerHTML = `
+                <label>Name</label>
+                <input type="text" class="input-field">
+                <label>Description</label>
+                <input type="text" class="input-field">
+                <label>Type</label>
+                <select class="input-field" onchange="toggleFields(this)">
+                    <option value="boolean">Boolean</option>
+                    <option value="number">Number</option>
+                    <option value="list">List</option>
+                </select>
+                <div class="numberFields" style="display: none;">
+                    <label>Low Limit</label>
+                    <input type="number" class="input-field">
+                    <label>High Limit</label>
+                    <input type="number" class="input-field">
+                </div>
+                <div class="listField" style="display: none;">
+                    <label>Comma-separated values</label>
+                    <input type="text" class="input-field">
+                </div>
+            `;
+            stateContainer.appendChild(newState);
         }
     </script>
 </body>
