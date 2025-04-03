@@ -128,6 +128,13 @@
         .delete-btn:hover {
             background: #b71c1c;
         }
+        .pillbox {
+            display: inline-block;
+            background: #90caf9;
+            border-radius: 12px;
+            padding: 5px 10px;
+            margin: 5px;
+        }
         @media screen and (max-width: 600px) {
             .popup {
                 width: 100%;
@@ -162,7 +169,7 @@
         <h4>State</h4>
         <div id="stateContainer"></div>
         <button onclick="addState()" style="background: #ffb300; color: white;">Add State</button>
-        <button onclick="saveDetails()" style="background: #0288d1; color: white;">Save</button>
+        <button id="saveButton" onclick="saveDetails()" style="background: #0288d1; color: white;">Save</button>
     </div>
     
     <script>
@@ -206,11 +213,16 @@
                 </div>
                 <div class="listField" style="display: none;">
                     <label>Comma-separated values</label>
-                    <input type="text" class="input-field">
+                    <input type="text" class="input-field" onkeyup="handleListInput(event, this)">
+                    <div class="listPills"></div>
                 </div>
                 <button class="delete-btn" onclick="deleteState(this)">Delete</button>
             `;
             stateContainer.appendChild(newState);
+        }
+        function deleteState(button) {
+            let stateSection = button.closest(".state-section");
+            stateSection.remove();
         }
         function deleteAppliance(button) {
             let applianceItem = button.closest(".appliance-item");
@@ -224,6 +236,44 @@
             } else {
                 alert("No appliances to revive!");
             }
+        }
+        function toggleFields(select) {
+            const parent = select.closest('.state-section');
+            const numberFields = parent.querySelector('.numberFields');
+            const listField = parent.querySelector('.listField');
+            if (select.value === 'number') {
+                numberFields.style.display = 'block';
+                listField.style.display = 'none';
+            } else if (select.value === 'list') {
+                numberFields.style.display = 'none';
+                listField.style.display = 'block';
+            } else {
+                numberFields.style.display = 'none';
+                listField.style.display = 'none';
+            }
+        }
+        function handleListInput(event, input) {
+            if (event.key === ',' || event.key === ' ') {
+                const value = input.value.trim();
+                if (value) {
+                    const pill = document.createElement('span');
+                    pill.className = 'pillbox';
+                    pill.textContent = value;
+                    pill.onclick = function() { this.remove(); }; // Allow pill removal on click
+                    input.parentElement.querySelector('.listPills').appendChild(pill);
+                    input.value = ''; // Clear input
+                }
+            }
+        }
+        function saveDetails() {
+            const saveButton = document.getElementById('saveButton');
+            saveButton.textContent = 'Saving...';
+            saveButton.disabled = true; // Disable button during save
+            setTimeout(() => {
+                saveButton.textContent = 'Save';
+                saveButton.disabled = false; // Re-enable button after save
+                alert('Details saved successfully!');
+            }, 2000); // Simulate save delay
         }
         window.onload = initializeAppliances;
     </script>
