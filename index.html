@@ -9,10 +9,14 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             padding: 20px;
+            background: linear-gradient(to right, #e3f2fd, #bbdefb);
         }
         .header {
             text-align: center;
             margin-bottom: 10px;
+            color: #1565c0;
+            font-size: 24px;
+            font-weight: bold;
         }
         .button-container {
             text-align: left;
@@ -26,61 +30,103 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border: 1px solid #ddd;
+            padding: 12px;
+            border: 1px solid #90caf9;
             margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .appliance-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
         }
         .button-group {
             display: flex;
             gap: 5px;
         }
         .button-group button {
-            padding: 3px 7px;
+            padding: 6px 12px;
             font-size: 12px;
+            background: #e53935;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .button-group button:hover {
+            background: #c62828;
         }
         button {
-            padding: 7px 14px;
+            padding: 8px 16px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
         }
         .popup {
             display: none;
             position: relative;
             margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #64b5f6;
+            background: white;
             width: 400px;
+            border-radius: 8px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+        }
+        .popup.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
         .popup .close {
             position: absolute;
             top: 10px;
             right: 10px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 20px;
             color: red;
         }
         .input-field {
             width: 100%;
-            padding: 5px;
+            padding: 6px;
             margin-top: 5px;
+            border: 1px solid #90caf9;
+            border-radius: 4px;
         }
         .section {
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #90caf9;
             padding: 10px;
             border-radius: 5px;
+            background: #e3f2fd;
         }
         #stateContainer {
             max-height: 200px;
             overflow-y: auto;
+            border: 1px solid #90caf9;
+            padding: 8px;
+            background: #ffffff;
+            border-radius: 5px;
         }
         .delete-btn {
-            background-color: red;
+            background-color: #d32f2f;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             cursor: pointer;
             margin-top: 5px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .delete-btn:hover {
+            background: #b71c1c;
         }
         @media screen and (max-width: 600px) {
             .popup {
@@ -91,34 +137,15 @@
 </head>
 <body>
     <div class="header">
-        <h2>Admin Page</h2>
+        Admin Dashboard
     </div>
     <div class="button-container">
-        <button onclick="showPopup()">+Add</button>
+        <button onclick="showPopup()" style="background: #1e88e5; color: white;">+ Add</button>
     </div>
-    <div class="appliance-list" id="applianceList">
-        <div class="appliance-item">
-            <span>Fan</span>
-            <div class="button-group">
-                <button onclick="deleteAppliance(this, 'Fan')">Delete</button>
-            </div>
-        </div>
-        <div class="appliance-item">
-            <span>AC</span>
-            <div class="button-group">
-                <button onclick="deleteAppliance(this, 'AC')">Delete</button>
-            </div>
-        </div>
-        <div class="appliance-item">
-            <span>Cooler</span>
-            <div class="button-group">
-                <button onclick="deleteAppliance(this, 'Cooler')">Delete</button>
-            </div>
-        </div>
-    </div>
+    <div class="appliance-list" id="applianceList"></div>
     
     <div class="button-container">
-        <button onclick="reviveAppliance()">Revive</button>
+        <button onclick="reviveAppliance()" style="background: #43a047; color: white;">Revive</button>
     </div>
     
     <div class="popup" id="addPopup">
@@ -132,21 +159,29 @@
             <label>Description</label>
             <input type="text" id="description" class="input-field">
         </div>
-
         <h4>State</h4>
         <div id="stateContainer"></div>
-        <button onclick="addState()">Add State</button>
-        <button onclick="saveDetails()">Save</button>
+        <button onclick="addState()" style="background: #ffb300; color: white;">Add State</button>
+        <button onclick="saveDetails()" style="background: #0288d1; color: white;">Save</button>
     </div>
     
     <script>
         let deletedAppliances = [];
-
+        function initializeAppliances() {
+            const defaultAppliances = ["Fan", "AC", "Cooler"];
+            let applianceList = document.getElementById("applianceList");
+            defaultAppliances.forEach(name => {
+                let div = document.createElement("div");
+                div.classList.add("appliance-item");
+                div.innerHTML = `${name} <button onclick="deleteAppliance(this)" class="delete-btn">Delete</button>`;
+                applianceList.appendChild(div);
+            });
+        }
         function showPopup() {
-            document.getElementById('addPopup').style.display = 'block';
+            document.getElementById('addPopup').classList.add('show');
         }
         function closePopup() {
-            document.getElementById('addPopup').style.display = 'none';
+            document.getElementById('addPopup').classList.remove('show');
         }
         function addState() {
             let stateContainer = document.getElementById("stateContainer");
@@ -177,27 +212,20 @@
             `;
             stateContainer.appendChild(newState);
         }
-        function deleteState(button) {
-            button.parentElement.remove();
-        }
-        function saveDetails() {
-            alert("Details saved successfully!");
-        }
-        function deleteAppliance(button, name) {
+        function deleteAppliance(button) {
             let applianceItem = button.closest(".appliance-item");
-            deletedAppliances.push(applianceItem.outerHTML);
+            deletedAppliances.push(applianceItem);
             applianceItem.remove();
-            alert(name + " deleted.");
         }
         function reviveAppliance() {
             if (deletedAppliances.length > 0) {
                 let lastDeleted = deletedAppliances.pop();
-                document.getElementById("applianceList").innerHTML += lastDeleted;
-                alert("Appliance revived.");
+                document.getElementById("applianceList").appendChild(lastDeleted);
             } else {
-                alert("No appliances to revive.");
+                alert("No appliances to revive!");
             }
         }
+        window.onload = initializeAppliances;
     </script>
 </body>
 </html>
