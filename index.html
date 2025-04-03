@@ -70,6 +70,23 @@
             padding: 10px;
             border-radius: 5px;
         }
+        #stateContainer {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        @media screen and (max-width: 600px) {
+            .popup {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -117,72 +134,20 @@
         </div>
 
         <h4>State</h4>
-        <div id="stateContainer">
-            <div class="section state-section">
-                <label>Name</label>
-                <input type="text" class="input-field">
-                <label>Description</label>
-                <input type="text" class="input-field">
-                <label>Type</label>
-                <select class="input-field" onchange="toggleFields(this)">
-                    <option value="boolean">Boolean</option>
-                    <option value="number">Number</option>
-                    <option value="list">List</option>
-                </select>
-                <div class="numberFields" style="display: none;">
-                    <label>Low Limit</label>
-                    <input type="number" class="input-field">
-                    <label>High Limit</label>
-                    <input type="number" class="input-field">
-                </div>
-                <div class="listField" style="display: none;">
-                    <label>Comma-separated values</label>
-                    <input type="text" class="input-field">
-                </div>
-            </div>
-        </div>
+        <div id="stateContainer"></div>
         <button onclick="addState()">Add State</button>
+        <button onclick="saveDetails()">Save</button>
     </div>
     
     <script>
         let deletedAppliances = [];
-        
+
         function showPopup() {
             document.getElementById('addPopup').style.display = 'block';
         }
-        
         function closePopup() {
             document.getElementById('addPopup').style.display = 'none';
         }
-        
-        function deleteAppliance(button, applianceName) {
-            let appliance = button.closest('.appliance-item');
-            deletedAppliances.push(applianceName);
-            appliance.remove();
-        }
-        
-        function reviveAppliance() {
-            let applianceList = document.getElementById('applianceList');
-            deletedAppliances.forEach(name => {
-                let div = document.createElement('div');
-                div.classList.add('appliance-item');
-                div.innerHTML = `
-                    <span>${name}</span>
-                    <div class="button-group">
-                        <button onclick="deleteAppliance(this, '${name}')">Delete</button>
-                    </div>
-                `;
-                applianceList.appendChild(div);
-            });
-            deletedAppliances = [];
-        }
-
-        function toggleFields(selectElement) {
-            let section = selectElement.closest('.state-section');
-            section.querySelector('.numberFields').style.display = (selectElement.value === "number") ? "block" : "none";
-            section.querySelector('.listField').style.display = (selectElement.value === "list") ? "block" : "none";
-        }
-        
         function addState() {
             let stateContainer = document.getElementById("stateContainer");
             let newState = document.createElement("div");
@@ -208,8 +173,30 @@
                     <label>Comma-separated values</label>
                     <input type="text" class="input-field">
                 </div>
+                <button class="delete-btn" onclick="deleteState(this)">Delete</button>
             `;
             stateContainer.appendChild(newState);
+        }
+        function deleteState(button) {
+            button.parentElement.remove();
+        }
+        function saveDetails() {
+            alert("Details saved successfully!");
+        }
+        function deleteAppliance(button, name) {
+            let applianceItem = button.closest(".appliance-item");
+            deletedAppliances.push(applianceItem.outerHTML);
+            applianceItem.remove();
+            alert(name + " deleted.");
+        }
+        function reviveAppliance() {
+            if (deletedAppliances.length > 0) {
+                let lastDeleted = deletedAppliances.pop();
+                document.getElementById("applianceList").innerHTML += lastDeleted;
+                alert("Appliance revived.");
+            } else {
+                alert("No appliances to revive.");
+            }
         }
     </script>
 </body>
